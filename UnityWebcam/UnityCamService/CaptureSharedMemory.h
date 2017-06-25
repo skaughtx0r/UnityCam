@@ -2,7 +2,7 @@
 
 class SharedMutex;
 
-#define MAX_BUF_SIZE	2000 * 2000 * 3
+#define MAX_BUF_SIZE	4096 * 2048 * 3 + 64
 
 #include "SharedMemData.h"
 

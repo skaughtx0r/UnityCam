@@ -4,24 +4,22 @@
 
 #include "CaptureSharedMemory.h"
 
-#define DEFAULT_WIDTH	1280
-#define DEFAULT_HEIGHT	720
-#define MIN_WIDTH		640
-#define MIN_HEIGHT		480
-#define MAX_WIDTH		1280
-#define MAX_HEIGHT		720
-#define MAX_FPS			30
+#pragma comment(lib, "wsock32.lib")
+#include <winsock2.h>
+#include <stdio.h>
+
+#define DEFAULT_WIDTH	4096//1280
+#define DEFAULT_HEIGHT	2048//720
+#define MIN_WIDTH		4096//640
+#define MIN_HEIGHT		2048//480
+#define MAX_WIDTH		4096//1280
+#define MAX_HEIGHT		2048//720
+#define MAX_FPS			60
 #define MIN_FPS			30
 #define MAX_FRAME_INTERVAL	10000000 / MIN_FPS
 #define MIN_FRAME_INTERVAL	10000000 / MAX_FPS
 
 #define DEFAULT_FPS		60
-
-#pragma comment(lib, "wsock32.lib")
-#include <winsock2.h>
-#include <stdio.h>
-
-
 
 std::function<bool()> waitFps_closure() {
 	auto startTime = std::chrono::system_clock::now();
@@ -484,8 +482,8 @@ STDMETHODIMP CaptureSource::CaptureStream::GetStreamCaps(int iIndex, AM_MEDIA_TY
 	pCaps->InputSize.cy = MAX_HEIGHT;
 	pCaps->MinCroppingSize.cx = MIN_WIDTH;
 	pCaps->MinCroppingSize.cy = MIN_HEIGHT;
-	pCaps->MaxCroppingSize.cx = MIN_WIDTH;
-	pCaps->MaxCroppingSize.cy = MIN_HEIGHT;
+	pCaps->MaxCroppingSize.cx = MAX_WIDTH;
+	pCaps->MaxCroppingSize.cy = MAX_HEIGHT;
 	pCaps->CropGranularityX = MIN_WIDTH;
 	pCaps->CropGranularityY = MIN_HEIGHT;
 	pCaps->CropAlignX = 1;
@@ -510,9 +508,9 @@ STDMETHODIMP CaptureSource::CaptureStream::GetStreamCaps(int iIndex, AM_MEDIA_TY
 
 HRESULT CaptureSource::CaptureStream::GetMediaType(CMediaType *pMediaType)
 {
-	int iPos = 1;
+	int iPos = 3; //Set as 4096 x 2048
 	if (iPos <  0) return E_INVALIDARG;
-	if (iPos > 2) return VFW_S_NO_MORE_ITEMS;
+	if (iPos > 3) return VFW_S_NO_MORE_ITEMS;
 
 	if(pMediaType == NULL) {
 		return E_POINTER;
@@ -529,6 +527,7 @@ HRESULT CaptureSource::CaptureStream::GetMediaType(CMediaType *pMediaType)
 		MediaType(640, 480),
 		MediaType(1280, 720),
 		MediaType(1920, 1080),
+      MediaType(4096, 2048),
 	};
 
 	VIDEOINFO *pvi = (VIDEOINFO *)pMediaType->AllocFormatBuffer(sizeof(VIDEOINFO));
